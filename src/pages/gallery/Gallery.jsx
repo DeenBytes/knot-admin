@@ -144,7 +144,8 @@ const Gallery = () => {
                     resetForm();
                     formik.resetForm();
                     setRenderedImage(null);
-                    setPage(1); // Reset to page 1 after new addition
+                    setSelectedCategory("All Categories");
+                    setPage(1);
                     dispatch(fetchGallery({ page: 1, limit }));
                 } else {
                     toast.error(payload?.message || 'Something went wrong');
