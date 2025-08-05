@@ -233,7 +233,7 @@ const Blog = () => {
                                 {blogItems.map((post, index) => (
                                     <tr key={index} className="border-b border-info dark:border-inputborder hover:bg-foreground dark:hover:bg-[#2d2d2d]/40 transition">
                                         <td className="py-4 px-4 min-w-[100px]">
-                                            {(page - 1) * limit + i + 1}
+                                            {(page - 1) * limit + index + 1}
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center">
