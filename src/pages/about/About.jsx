@@ -11,7 +11,7 @@ import Popup from '../../hooks/alert';
 import { toast } from 'react-toastify';
 
 const About = () => {
-    const { loading,  aboutData } = useSelector(state => state.event);
+    const { loading, aboutData } = useSelector(state => state.event);
     const [openModal, setOpenModal] = useState(false);
     const [content, setContent] = useState('');
     const [renderedImage, setRenderedImage] = useState('');

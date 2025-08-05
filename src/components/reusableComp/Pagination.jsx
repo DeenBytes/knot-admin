@@ -1,6 +1,6 @@
 
 
-const Pagination = ({ totalPages,currentPage,setCurrentPage }) => {
+const Pagination = ({ totalPages, currentPage, setCurrentPage }) => {
   const getPaginationRange = () => {
     if (totalPages <= 5) {
       return [...Array(totalPages).keys()].map((i) => i + 1);
@@ -32,7 +32,7 @@ const Pagination = ({ totalPages,currentPage,setCurrentPage }) => {
   };
 
   return (
-    <div className={`flex space-x-2  items-center ${totalPages ===0 ? 'hidden' : 'block'}`}>
+    <div className={`flex space-x-2  items-center ${totalPages === 0 ? 'hidden' : 'block'}`}>
       {/* Prev Button */}
       <button
         onClick={handlePrev}
@@ -49,13 +49,12 @@ const Pagination = ({ totalPages,currentPage,setCurrentPage }) => {
         <button
           key={i}
           onClick={() => handleClick(page)}
-          className={`h-9 w-9 flex items-center justify-center rounded-full text-sm cursor-pointer transition ${
-            page === currentPage
-              ? 'bg-primary text-lightwhite'
+          className={`h-9 w-9 flex items-center justify-center rounded-full text-sm cursor-pointer transition ${page === currentPage
+              ? 'bg-primary text-lightwhite dark:text-black'
               : page === '...'
-              ? 'text-gray-400 cursor-default'
-              : 'bg-light text-lightwhite dark:bg-[#252a3a] dark:text-light'
-          }`}
+                ? 'text-gray-400 cursor-default'
+                : 'bg-light text-lightwhite dark:bg-[#252a3a] dark:text-light'
+            }`}
           disabled={page === '...'}
         >
           {page}

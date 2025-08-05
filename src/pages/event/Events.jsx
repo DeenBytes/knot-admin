@@ -14,6 +14,7 @@ const statusOptions = ['Upcoming', 'Completed', 'Cancelled'];
 const Events = () => {
     const [selectedStatus, setSelectedStatus] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const limit = 10; 
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { events, totalPages, loading, } = useSelector((state) => state.event);
@@ -86,7 +87,7 @@ const Events = () => {
                     <table className="min-w-full text-sm ">
                         <thead className="pt-4 ">
                             <tr className="text-left text-primary dark:bg-transparent dark:text-light  text-sm border-b border-lightborder dark:border-inputborder">
-                                {['Event Name', 'Discription', 'Date', 'Start Time', 'End Time', 'Status', 'Actions'].map((header, i) => (
+                                {['Sr. No.', 'Event Name', 'Discription', 'Date', 'Start Time', 'End Time', 'Status', 'Actions'].map((header, i) => (
                                     <th key={i} className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">
                                         {header}
                                     </th>
@@ -96,6 +97,9 @@ const Events = () => {
                         <tbody>
                             {events?.map((event, i) => (
                                 <tr key={i} className="border-b border-info dark:border-inputborder hover:bg-foreground dark:hover:bg-[#2d2d2d]/40 transition">
+                                     <td className="py-4 px-4 min-w-[120px] text-center">
+                                        {(currentPage - 1) * limit + i + 1}
+                                    </td>
                                     <td className="py-4 px-4 min-w-[250px]">
                                         <div className="flex items-center">
                                             <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 border">
@@ -122,8 +126,8 @@ const Events = () => {
                                     </td>
 
                                     <td className="py-4 px-4">
-                                        <span className="px-3 py-1 bg-success dark:bg-success/30 text-lightwhite dark:text-success rounded-full text-xs whitespace-nowrap">
-                                            Upcoming
+                                        <span className={`px-3 py-1 ${event.status==="Upcoming" ? "bg-success text-lightwhite dark:bg-success/30 dark:text-success" : "bg-error text-lightwhite dark:bg-error/30 dark:text-error"} rounded-full text-xs whitespace-nowrap`}>
+                                            {event.status}
                                         </span>
                                     </td>
 

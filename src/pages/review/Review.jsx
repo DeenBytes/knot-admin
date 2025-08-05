@@ -13,7 +13,7 @@ const Review = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [reviewData, setReviewData] = useState([])
 
-    const  navigate = useNavigate();
+    const navigate = useNavigate();
 
     //========= Function to get the review data =============\\
     const fetchReviewData = async () => {
@@ -30,6 +30,11 @@ const Review = () => {
             if (error?.status === 404) {
                 setReviewData([]);
                 setTotalPages(0);
+                return
+            }
+            if (error?.response?.status === 400) {
+                setReviewData([]);
+                setTotalPages(0);
             }
             setLoading(false);
         }
@@ -38,24 +43,24 @@ const Review = () => {
         fetchReviewData();
     }, [page, limit]);
 
-     //============ function to delete the review data ===========\\
-        const handleDelete = async (id) => {
-            try {
-                const result = await Popup("warning", "Are you sure?", "You won't be able to revert this!");
-                if (result.isConfirmed) {
-                    const response = await apiJsonAuth.delete(`/api/Admin/adminDeleteReview/${id}`);
-                    console.log(response);
-                    if (response.status === 200) {
-                        toast.success(response.data.message);
-                        fetchReviewData();
-                    } else {
-                        toast.error(response.data.message);
-                    }
+    //============ function to delete the review data ===========\\
+    const handleDelete = async (id) => {
+        try {
+            const result = await Popup("warning", "Are you sure?", "You won't be able to revert this!");
+            if (result.isConfirmed) {
+                const response = await apiJsonAuth.delete(`/api/Admin/adminDeleteReview/${id}`);
+                console.log(response);
+                if (response.status === 200) {
+                    toast.success(response.data.message);
+                    fetchReviewData();
+                } else {
+                    toast.error(response.data.message);
                 }
-            } catch (error) {
-                error?.response?.data?.message && toast.error(error?.response?.data?.message);
             }
+        } catch (error) {
+            error?.response?.data?.message && toast.error(error?.response?.data?.message);
         }
+    }
 
     return (
         <>
@@ -78,7 +83,7 @@ const Review = () => {
                     <table className="min-w-full text-sm ">
                         <thead className="pt-4 ">
                             <tr className="text-left text-primary dark:bg-transparent dark:text-light  text-sm border-b border-lightborder dark:border-inputborder">
-                                {['User Name', 'Rating', 'Description', 'Actions'].map((header, i) => (
+                                {['Sr. No.', 'User Name', 'Rating', 'Description', 'Actions'].map((header, i) => (
                                     <th key={i} className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">
                                         {header}
                                     </th>
@@ -88,6 +93,9 @@ const Review = () => {
                         <tbody>
                             {reviewData.length > 0 ? reviewData.map((review, i) => (
                                 <tr key={i} className="border-b border-info dark:border-inputborder hover:bg-foreground dark:hover:bg-[#2d2d2d]/40 transition">
+                                    <td className="">
+                                        <p className="font-medium truncate text-center">{(page - 1) * limit + i + 1}</p>
+                                    </td>
                                     <td className="py-4 px-4 min-w-[220px]">
                                         <p className="font-medium truncate">{review?.userName}</p>
                                     </td>
@@ -98,7 +106,7 @@ const Review = () => {
                                     <td className="py-4 px-4 whitespace-nowrap">{review?.description}</td>
                                     <td className="py-4 px-4">
                                         <div className="flex space-x-2 justify-end">
-                                             <button className="w-8 h-8 flex items-center justify-center rounded-lg cursor-pointer bg-[#8e8e8e] dark:bg-[#252a3a] text-info hover:text-warning" onClick={() => navigate(`/website/reviews/edit-review/${review.id}`)}>
+                                            <button className="w-8 h-8 flex items-center justify-center rounded-lg cursor-pointer bg-[#8e8e8e] dark:bg-[#252a3a] text-info hover:text-warning" onClick={() => navigate(`/website/reviews/edit-review/${review.id}`)}>
                                                 <i className="ri-edit-line"></i>
                                             </button>
                                             <button className="w-8 h-8 flex items-center justify-center rounded-lg cursor-pointer bg-[#8e8e8e] dark:bg-[#252a3a] text-info hover:text-error" onClick={() => handleDelete(review?.id)}>

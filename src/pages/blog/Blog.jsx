@@ -216,6 +216,7 @@ const Blog = () => {
                         <table className="min-w-full text-sm ">
                             <thead>
                                 <tr className="text-left text-primary dark:bg-transparent uppercase dark:text-light  text-sm border-b border-lightborder dark:border-inputborder">
+                                    <th className="px-6 py-4 font-medium min-w-52">Sr. No</th>
                                     <th className="px-6 py-4 font-medium min-w-52">Title</th>
                                     <th className="px-6 py-4 font-medium min-w-32 ">Feature Image</th>
                                     <th className="px-6 py-4 font-medium min-w-52 ">Description</th>
@@ -231,6 +232,9 @@ const Blog = () => {
                             <tbody>
                                 {blogItems.map((post, index) => (
                                     <tr key={index} className="border-b border-info dark:border-inputborder hover:bg-foreground dark:hover:bg-[#2d2d2d]/40 transition">
+                                        <td className="py-4 px-4 min-w-[100px]">
+                                            {(page - 1) * limit + i + 1}
+                                        </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center">
                                                 <img
@@ -250,7 +254,7 @@ const Blog = () => {
                                         <td className="px-6 py-4">
                                             <div dangerouslySetInnerHTML={{ __html: post?.description.length > 50 ? `${post?.description.slice(0, 50)}...` : post?.description }}></div>
                                         </td>
-                                        <td className="px-6 py-4">{formatDate(post?.createdAt)  || '-'}</td>
+                                        <td className="px-6 py-4">{formatDate(post?.createdAt) || '-'}</td>
                                         <td className="px-6 py-4">
                                             <span className={`px-2 py-[8px] rounded-[4px] text-[0.75rem] font-medium ${post.status === 'Published' ? 'bg-green-300 text-success' : 'bg-yellow-800/80 text-warning'}`}>
                                                 {post.status}

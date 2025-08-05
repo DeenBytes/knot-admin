@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import Pagination from '../../components/reusableComp/Pagination';
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { apiJsonAuth } from '../../api';
-import Popup from '../../hooks/alert';
+import Pagination from '../../components/reusableComp/Pagination';
 import { toast } from 'react-toastify';
+import Popup from '../../hooks/alert';
 
-const GuestList = () => {
+const BookingTable = () => {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
-    const [guestListData, setGuestListData] = useState([]);
+    const [bookingList, setBookingList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [firstRender, setFirstRender] = useState(true);
     const [filter, setFilter] = useState({
@@ -17,14 +17,13 @@ const GuestList = () => {
         endDate: '',
     });
 
-    //=================Function to fetch guest list data=================//
-    const fetchGuestListData = async () => {
+    //=================Function to fetch booking list data=================//
+    const fetchBookingListData = async () => {
         try {
             setLoading(true);
-            const res = await apiJsonAuth.get(`/api/Admin/adminGetGuestList?page=${page}&limit=${limit}&startDate=${filter.startDate}&endDate=${filter.endDate}`);
+            const res = await apiJsonAuth.get(`/api/Admin/adminGetVipList?page=${page}&limit=${limit}&startDate=${filter.startDate}&endDate=${filter.endDate}`);
             if (res.data?.status === 1) {
-                console.log("Data");
-                setGuestListData(res.data.result);
+                setBookingList(res.data.result);
                 setTotalPages(res.data.totalPages);
                 setLoading(false);
             }
@@ -32,7 +31,7 @@ const GuestList = () => {
         } catch (error) {
             console.log("Error", error);
             if (error?.status === 404) {
-                setGuestListData([]);
+                setBookingList([]);
                 setTotalPages(0);
                 setLoading(false);
             }
@@ -40,47 +39,47 @@ const GuestList = () => {
 
     }
     useEffect(() => {
-    if (firstRender) {
-        fetchGuestListData();
-        setFirstRender(false);
-    } else {
-        if (filter.startDate && filter.endDate) {
-            fetchGuestListData();
-        }
-    }
-}, [page, limit, filter.startDate, filter.endDate]);
-
-//============ Function To Delete the  guest list Data ==============\\
-const handleDelete = async (id) => {
-    try {
-        const result = await Popup("warning", "Are you sure?", "You won't be able to revert this!");
-
-        if (result.isConfirmed) {
-            const response = await apiJsonAuth.delete(`/api/Admin/adminDeleteGuestList/${id}`);
-            if (response.data.status === 1) {
-                toast.success(response.data.message);
-                fetchGuestListData();
-            } else {
-                toast.error(response.data.message);
+        if (firstRender) {
+            fetchBookingListData();
+            setFirstRender(false);
+        } else {
+            if (filter.startDate && filter.endDate) {
+                fetchBookingListData();
             }
         }
-    } catch (error) {
-        error?.response?.data?.message && toast.error(error?.response?.data?.message);
-        if(error?.response?.status === 404){
-            setGuestListData([]);
-            setTotalPages(0);
-            setLoading(false);
+    }, [page, limit, filter.startDate, filter.endDate]);
+
+
+    //============ Function To Delete the  booking Data ==============\\
+    const handleDelete = async (id) => {
+        try {
+            const result = await Popup("warning", "Are you sure?", "You won't be able to revert this!");
+
+            if (result.isConfirmed) {
+                const response = await apiJsonAuth.delete(`/api/Admin/adminDeleteVipList/${id}`);
+                if (response.data.status === 1) {
+                    toast.success(response.data.message);
+                    fetchBookingListData();
+                } else {
+                    toast.error(response.data.message);
+                }
+            }
+        } catch (error) {
+            error?.response?.data?.message && toast.error(error?.response?.data?.message);
+            if (error?.response?.status === 404) {
+                setBookingList([]);
+                setTotalPages(0);
+                setLoading(false);
+            }
         }
     }
-}
-
     return (
         <>
-            <div className="mb-8">
-                <div className="flex items-center text-sm text-light mb-2">
+            <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center text-sm text-light">
                     <Link to="/dashboard" className="hover:text-primary">Dashboard</Link>
                     <i className="ri-arrow-right-s-line mx-2 text-xs"></i>
-                    <span>Guest List</span>
+                    <span>Review</span>
                 </div>
             </div>
             <div className="bg-white dark:bg-secondary border border-info dark:border-inputborder rounded-lg p-4 mb-6">
@@ -93,17 +92,10 @@ const handleDelete = async (id) => {
                         <div className="relative">
                             <input type="date" name='endDate' className="bg-white dark:bg-inputbg border border-lightborder dark:border-inputborder text-black dark:text-lightwhite rounded-lg py-3 px-2 md:px-5text-sm" value={filter.endDate} onChange={(e) => setFilter({ ...filter, endDate: e.target.value })} />
                         </div>
-                    <span className="md:ml-4 flex items-center space-x-2 border border-lightborder dark:border-inputborder dark:bg-white/5 hover:bg-white/10 px-4 py-3 rounded-md text-sm whitespace-nowrap cursor-pointer" onClick={() => {setFilter({ startDate: '', endDate: '' })
-                    setFirstRender(true)   
-                }}>Clear</span>
-                    </div>
-                    <div className="md:ml-auto">
-                        <button className="flex items-center space-x-2 border border-lightborder dark:border-inputborder dark:bg-white/5 hover:bg-white/10 px-4 py-2 rounded-md text-sm whitespace-nowrap cursor-pointer">
-                            <div className="w-5 h-5 flex items-center justify-center">
-                                <i className="ri-download-2-line"></i>
-                            </div>
-                            <span>Export</span>
-                        </button>
+                        <span className="md:ml-4 flex items-center space-x-2 border border-lightborder dark:border-inputborder dark:bg-white/5 hover:bg-white/10 px-4 py-3 rounded-md text-sm whitespace-nowrap cursor-pointer" onClick={() => {
+                            setFilter({ startDate: '', endDate: '' })
+                            setFirstRender(true)
+                        }}>Clear</span>
                     </div>
                 </div>
             </div>
@@ -115,7 +107,7 @@ const handleDelete = async (id) => {
                     <table className="min-w-full text-sm ">
                         <thead className="pt-4 ">
                             <tr className="text-left text-primary dark:bg-transparent dark:text-light  text-sm border-b border-lightborder dark:border-inputborder">
-                                {['Sr. No.', 'OrderId', 'Full Name', 'Email', 'Phone', 'No. of Guests', 'Order Date', 'Actions'].map((header, i) => (
+                                {['Sr. No.', 'OrderId', 'Full Name', 'Email', 'Phone', 'No. of Guests', 'Order Date', 'Order Time', 'Description', 'Actions'].map((header, i) => (
                                     <th key={i} className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">
                                         {header}
                                     </th>
@@ -123,12 +115,12 @@ const handleDelete = async (id) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {guestListData.length > 0 ? guestListData.map((guest, i) => (
+                            {bookingList.length > 0 ? bookingList.map((guest, i) => (
                                 <tr key={i} className="border-b border-info dark:border-inputborder hover:bg-foreground dark:hover:bg-[#2d2d2d]/40 transition">
                                     <td className="py-4 px-4 min-w-[120px] text-center">
                                         {(page - 1) * limit + i + 1}
                                     </td>
-                                     <td className="py-4 px-4 min-w-[220px]">
+                                    <td className="py-4 px-4 min-w-[220px]">
                                         <p className="font-medium truncate">{guest?.orderId}</p>
                                     </td>
                                     <td className="py-4 px-4 min-w-[220px]">
@@ -138,7 +130,13 @@ const handleDelete = async (id) => {
                                     <td className="py-4 px-4 whitespace-nowrap">{guest?.email}</td>
                                     <td className="py-4 px-4 whitespace-nowrap">{guest?.phone}</td>
                                     <td className="py-4 px-4 text-center whitespace-nowrap">{guest?.no_of_Guests}</td>
-                                    <td className="py-4 px-4 text-center whitespace-nowrap">{guest?.Date}</td>
+                                    <td className="py-4 px-4 text-center whitespace-nowrap">{new Date(guest?.Date).toLocaleDateString("en-GB", {
+                                        year: "numeric",
+                                        month: "2-digit",
+                                        day: "numeric",
+                                    })}</td>
+                                    <td className="py-4 px-4 text-center whitespace-nowrap">{guest?.Time}</td>
+                                    <td className="py-4 px-4 whitespace-nowrap">{guest?.request}</td>
 
                                     <td className="py-4 px-4">
                                         <div className="flex space-x-2 justify-end">
@@ -157,7 +155,7 @@ const handleDelete = async (id) => {
                     </table>
                 </div>
 
-                <div className="p-4  flex flex-col md:flex-row gap-2 md:gap-0 justify-end items-center">
+                <div className="p-4  flex  gap-2 md:gap-0 justify-end items-center">
                     <Pagination totalPages={totalPages} currentPage={page} setCurrentPage={setPage} />
                 </div>
             </div>}
@@ -165,4 +163,4 @@ const handleDelete = async (id) => {
     )
 }
 
-export default GuestList
+export default BookingTable

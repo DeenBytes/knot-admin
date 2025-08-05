@@ -1,5 +1,9 @@
+import { useDispatch, useSelector } from 'react-redux';
 import Button from './reusableComp/Button';
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { fetchEvents } from '../redux/async/eventAsync';
+import Pagination from './reusableComp/Pagination';
 
 const events = [
     {
@@ -35,6 +39,13 @@ const events = [
 ];
 
 const UpcomingEvents = () => {
+    const dispatch = useDispatch();
+    const [currentPage, setCurrentPage] = useState(1);
+    const { events, totalPages, loading, } = useSelector((state) => state.event);
+
+    useEffect(() => {
+        dispatch(fetchEvents({ page: currentPage, name: "" }));
+    }, [dispatch]);
 
     return (
         <div className="bg-white dark:bg-secondary border border-info dark:border-inputborder rounded-lg p-6 lg:col-span-2 hover:shadow-[0_8px_16px_rgba(0,0,0,0.2)] transition duration-300 hover:transform hover:-translate-y-[2px]">
@@ -47,20 +58,13 @@ const UpcomingEvents = () => {
                 </Button>
             </div>
 
-            <div className="flex flex-wrap gap-4 mb-6">
-
-                <div className="relative">
-                    <input type="text" placeholder="mm/dd/yyyy" className="bg-white dark:bg-inputbg border border-lightborder dark:border-inputborder text-black dark:text-lightwhite rounded-lg py-3 pl-5 pr-5 text-sm" />
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                        <i className="ri-calendar-line"></i>
-                    </div>
-                </div>
-            </div>
-            <div className="w-full overflow-x-auto ">
+            {loading ? <div className='flex justify-center items-center h-full m-auto '>
+                <i className="ri-loader-2-line text-7xl animate-spin text-primary flex items-center justify-center"></i>
+            </div> : <div className="w-full overflow-x-auto mt-4">
                 <table className="min-w-full text-sm">
                     <thead className="">
                         <tr className="text-left text-light text-sm border-b border-lightborder dark:border-inputborder">
-                            {['Event Name', 'Date', 'Time', 'Category', 'Status', 'Actions'].map((header, i) => (
+                            {['Event Name', 'Date', 'Time', 'Description', 'Status', 'Actions'].map((header, i) => (
                                 <th key={i} className="pb-3 px-4 font-medium whitespace-nowrap">
                                     {header}
                                 </th>
@@ -70,30 +74,34 @@ const UpcomingEvents = () => {
                     <tbody>
                         {events.map((event, i) => (
                             <tr key={i} className="border-b border-info dark:border-inputborder hover:bg-foreground dark:hover:bg-[#2d2d2d]/40 transition">
-                                <td className="py-4 px-4 min-w-[220px]">
+
+                                <td className="py-4 px-4 min-w-[250px]">
                                     <div className="flex items-center">
-                                        <div className={`w-10 h-10 rounded ${event.bgColor} flex items-center justify-center mr-3`}>
-                                            <i className={`${event.icon} ${event.iconColor}`}></i>
+                                        <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 border">
+                                            <img src={event?.theme_Image} alt={event?.theme_Name} className="w-full h-full object-cover" />
                                         </div>
-                                        <div className="w-full max-w-[160px]">
-                                            <p className="font-medium truncate">{event.name}</p>
-                                            <p className="text-sm text-light truncate">{event.dj}</p>
+
+
+                                        <div className="ml-2">
+                                            <p className="font-medium truncate">{event?.theme_Name}</p>
+                                            <p className="text-sm text-light truncate">{event?.djName}</p>
                                         </div>
                                     </div>
                                 </td>
 
+
                                 <td className="py-4 px-4 whitespace-nowrap">{event.date}</td>
-                                <td className="py-4 px-4 whitespace-nowrap">{event.time}</td>
+                                <td className="py-4 px-4 whitespace-nowrap">{`${event.startTime} - ${event.endTime}`}</td>
 
                                 <td className="py-4 px-4">
                                     <span className="px-3 py-1 bg-opacity-30 text-xs rounded-full whitespace-nowrap" >
-                                        {event.category}
+                                        {event?.description}
                                     </span>
                                 </td>
 
                                 <td className="py-4 px-4">
-                                    <span className="px-3 py-1 bg-success dark:bg-success/30 text-lightwhite dark:text-success rounded-full text-xs whitespace-nowrap">
-                                        Upcoming
+                                    <span className={`px-3 py-1 ${event.status === "Upcoming" ? "bg-success text-lightwhite dark:bg-success/30 dark:text-success" : "bg-error text-lightwhite dark:bg-error/30 dark:text-error"} rounded-full text-xs whitespace-nowrap`}>
+                                        {event.status}
                                     </span>
                                 </td>
 
@@ -111,19 +119,13 @@ const UpcomingEvents = () => {
                         ))}
                     </tbody>
                 </table>
-            </div>
+            </div>}
 
 
-            <div className="mt-6 flex flex-col md:flex-row gap-2 md:gap-0 justify-between items-center">
-                <p className="text-sm text-light">Showing 1 to 3 of 48 entries</p>
-                <div className="flex space-x-2">
-                    <button className="h-9 w-9 flex items-center justify-center rounded-md cursor-pointer bg-light text-lightwhite dark:bg-[#252a3a] dark:text-light"><i className="ri-arrow-left-s-line"></i></button>
-                    {[1, 2, 3].map((num) => (
-                        <button key={num} className={`h-9 w-9 flex items-center rounded-md justify-center cursor-pointer ${num === 1 ? 'bg-primary text-lightwhite' : 'bg-light text-lightwhite dark:bg-[#252a3a] dark:text-light'}`}>{num}</button>
-                    ))}
-                    <button className="h-9 w-9 flex items-center justify-center rounded-md cursor-pointer bg-light text-lightwhite dark:bg-[#252a3a] dark:text-light"><i className="ri-arrow-right-s-line"></i></button>
-                </div>
-            </div>
+            {/* Pagination */}
+            {totalPages > 0 && (<div className="p-4 flex gap-2 md:gap-0 justify-end items-center mt-2">
+                <Pagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+            </div>)}
         </div>
     );
 };

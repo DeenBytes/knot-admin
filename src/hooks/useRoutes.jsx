@@ -14,6 +14,7 @@ const Gallery = lazy(() => import('../pages/gallery/Gallery'));
 const Category = lazy(() => import('../pages/gallery/Category'));
 const GuestOutlet = lazy(() => import('../pages/Guest/GuestOutlet'));
 const GuestList = lazy(() => import('../pages/Guest/GuestList'));
+const BookingTable = lazy(() => import('../pages/Guest/BookingTable'));
 const Setting = lazy(() => import('../pages/Setting'));
 const BlogOutlet = lazy(() => import('../pages/blog/BlogOutlet'));
 const Blog = lazy(() => import('../pages/blog/Blog'));
@@ -25,7 +26,8 @@ const EditMember =  lazy(() => import('../pages/auth/EditMember'));
 const Review = lazy(() => import('../pages/review/Review'));
 const AddNewReview = lazy(() => import('../pages/review/AddNewReview'));
 const EditReview = lazy(() => import('../pages/review/EditReview'));
-
+const SubscribeUser = lazy(() => import('../pages/website/SubscribeUser'));
+const ContactUs = lazy(() => import('../pages/website/ContactUs'));
 
 const PublicOnlyRoute = ({ component }) => {
   const { user } = useSelector(state => state?.auth);
@@ -107,13 +109,17 @@ const useRoutes = () => {
       ]
     },
     {
-      path: "/guestlist/",
+      path: "/guest/",
       component: <PrivateRoute component={<GuestOutlet />} />,
       children: [
         {
-          index: true,
+          path: "guestlist",
           component: <PrivateRoute component={<GuestList />} />,
         },
+        {
+          path: "bookings",
+          component: <PrivateRoute component={<BookingTable />} />,
+        }
       ]
     },
     {
@@ -145,8 +151,9 @@ const useRoutes = () => {
         {path: "reviews", component: <PrivateRoute component={<Review />} />},
         {path: "reviews/add-review", component: <PrivateRoute component={<AddNewReview />} />},
         {path: "reviews/edit-review/:id", component: <PrivateRoute component={<EditReview />} />},
+        {path: "subscribe-user", component: <PrivateRoute component={<SubscribeUser />} />},
+        {path: "contact-us", component: <PrivateRoute component={<ContactUs />} />},
 
-        
       ]
     },
     {path:"/team/add-Member", component: <PrivateRoute component={<AddMember />} />},
@@ -162,8 +169,8 @@ const useRoutes = () => {
   const sidebarLink = [
     { id: 1, icon: 'dashboard-line', label: 'Dashboard', link: '/dashboard' ,dock: true },
     { id: 2, icon: 'calendar-line', label: 'Events', link: '/events' ,dock: true },
-    { id: 3, icon: 'table-line', label: 'Bookings', link: '/bookings', dock: true },
-    { id: 4, icon: 'team-line', label: 'Guest List', link: '/guestlist',dock: true },
+    { id: 3, icon: 'table-line', label: 'Bookings', link: '/guest/bookings', dock: true },
+    { id: 4, icon: 'team-line', label: 'Guest List', link: '/guest/guestlist',dock: true },
     { id: 5, icon: 'image-line', label: 'Gallery', link: '/gallery',dock: false,
        subList: [
         {
@@ -194,7 +201,18 @@ const useRoutes = () => {
           title: "Reviews",
           dock: true,
         },
-
+        {
+          icon: 'user-star-fill',
+          path: "/website/subscribe-user",
+          title: "Subscribe User",
+          dock: true,
+        },
+        {
+          icon: 'contacts-fill',
+          path: "/website/contact-us",
+          title: "Contact Us",
+          dock: true,
+        }
       ]
     },
     { id: 8, icon: 'settings-3-line', label: 'Settings', link: '/settings',dock: true },
